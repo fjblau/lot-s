@@ -5,7 +5,7 @@ from crate import client
 import datetime
 import time
 
-connection = client.connect('http://192.168.1.135:4200')
+connection = client.connect('http://ec2-52-90-8-106.compute-1.amazonaws.com:4200')
 cursor = connection.cursor()
 
 while True:
