@@ -12,7 +12,7 @@ while True:
 
 	tranmin = int(datetime.datetime.strftime(datetime.datetime.now(), '%Y%m%d%H%M')) -1 
 	print tranmin
-	cursor.execute("select * from berry where tranmin = ? order by sensordttm", (str(tranmin),))
+	cursor.execute("select strjson from berry where tranmin = ? order by sensordttm", (str(tranmin),))
 	data = hashlib.sha256()
 	result = "START"
 	while result:
