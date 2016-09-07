@@ -1,0 +1,6 @@
+Getting the MAC address in python:
+
+http://stackoverflow.com/questions/21972066/find-my-computers-mac-address-with-python
+
+from uuid import getnode as get_mac
+mac = get_mac()
