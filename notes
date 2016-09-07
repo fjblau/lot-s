@@ -4,3 +4,5 @@ http://stackoverflow.com/questions/21972066/find-my-computers-mac-address-with-p
 
 from uuid import getnode as get_mac
 mac = get_mac()
+
+You can also cat /sys/class/net/eth0/address
