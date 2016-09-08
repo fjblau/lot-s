@@ -9,6 +9,8 @@ You can also cat /sys/class/net/eth0/address
 
 Notes on making a Merkle Tree:
 
+Challenge of doing the Merkle is needing an even list size. Definitely a problem at the millisecond scale.
+
 bc::hash_digest create_merkle(bc::hash_list& merkle)
 {
     // Stop if hash list is empty.
