@@ -5,11 +5,12 @@ from crate import client
 import datetime
 import time
 import requests
+import sys
 
 
 headers = {'Content-Type': 'application/json', 'Accept': 'application/json'}
 
-def createPayload(msg):
+def createPayload(keyname, msg):
 	headers = {"Content-Type": "application/json", "Accept": "application/json"}
 	#msg = "here is the new mac"
 	payload  = '{ \
@@ -23,7 +24,7 @@ def createPayload(msg):
     		"ctorMsg": { \
       		"function": "write", \
       	"args": [ \
-        	"hello_world", "' +msg+ '" \
+        	"' +keyname+ '", "' +msg+ '" \
      		] \
     		}, \
     		"secureContext": "user_type1_34135b9471" \
@@ -32,24 +33,37 @@ def createPayload(msg):
 	}'
 	return payload
 
-connection = client.connect('http://ec2-52-90-8-106.compute-1.amazonaws.com:4200')
+#connection = client.connect('http://ec2-52-90-8-106.compute-1.amazonaws.com:4200')
+print("Creating crate connection")
+connection = client.connect('http://192.168.1.133:4200')
 cursor = connection.cursor()
+print("crate connection complete")
 
 while True:
-
+	print("Get DB records")
 	tranmin = int(datetime.datetime.strftime(datetime.datetime.now(), '%Y%m%d%H%M')) -1 
-	#print tranmin
 	cursor.execute('select strjson from berry where tranmin = ? order by sensordttm', (str(tranmin),))
 	data = hashlib.sha256()
 	result = 'START'
+	print("Hash result")
 	while result:
 		result = cursor.fetchone()
 		data.update(str(result).encode('utf-8'))
-	payload=createPayload(data.hexdigest())
-	r=requests.post('https://1c1390b2-5da0-4644-ac20-7414429bbb94_vp1.us.blockchain.ibm.com:443/chaincode', headers=headers, data=payload)
-	r.json()
-	print(data.hexdigest())
-	time.sleep(1)
-	
+	print("create payload")
+	payload=createPayload(str(tranmin), data.hexdigest())
+
+	print("submit to ledger")
+	try:
+		r=requests.post('https://1c1390b2-5da0-4644-ac20-7414429bbb94_vp1.us.blockchain.ibm.com:443/chaincode', headers=headers, data=payload, timeout=8)
+		print("Submitted to ledger: "+str(tranmin)+":"+data.hexdigest())
+	#time.sleep(1)
+
+	except:
+		print("Error")
+
+	#except:
+	#	print("Other Error")
+		
+	time.sleep(5)
 
 
